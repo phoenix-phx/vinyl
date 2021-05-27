@@ -14,7 +14,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final audioName = "queganas.mp3";
-  final name = "Etherite - Fuentes de Ortiz";
 
   AudioPlayer audioPlayer;
   AudioCache audioCache;
