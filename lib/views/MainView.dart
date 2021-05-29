@@ -8,7 +8,15 @@ class MainView extends StatefulWidget {
   _MainViewState createState() => _MainViewState();
 }
 
-class _MainViewState extends State<MainView> {
+class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin {
+  TabController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TabController(length: 3, vsync: this, initialIndex: 0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,14 +36,11 @@ class _MainViewState extends State<MainView> {
             ),
             PopupMenuButton(
                 itemBuilder: (ctx) => [
-                  PopupMenuItem(child: Text('Show Splash'), value: '0',),
                   PopupMenuItem(child: Text('Credits'), value: '1',),
                 ],
                 onSelected: (value){
                   setState(() {
                     switch(value){
-                      case '0':
-                        break;
                       case '1':
                         Route route = MaterialPageRoute(builder: (context) => Credits());
                         Navigator.of(context).push(route);
@@ -45,9 +50,25 @@ class _MainViewState extends State<MainView> {
                 },
             )
           ],
+          bottom: TabBar(
+              controller: _controller,
+              tabs: [
+                Tab(text: "Songs",),
+                Tab(text: "Albums",),
+                Tab(text: "Artists",),
+              ],
+          ),
         ),
-        body: Center(
-          child: Text('wtf is happening...'),
+
+        body: TabBarView(
+            controller: _controller,
+            children: [
+              // todas las paginas a mostrar
+              Center(child: Text('Songs List'),),
+              Center(child: Text('Albums List'),),
+              Center(child: Text('Artists List'),),
+
+            ]
         ),
       ),
     );
