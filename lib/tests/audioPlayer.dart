@@ -1,3 +1,6 @@
+//TODO: warning!! this sample uses -> audioplayers: ^0.8.0
+
+/*
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -102,3 +105,4 @@ class _SimpleAudioPlayerState extends State<SimpleAudioPlayer> {
     );
   }
 }
+*/
