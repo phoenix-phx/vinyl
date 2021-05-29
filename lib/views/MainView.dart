@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_audio_query/flutter_audio_query.dart';
+import 'package:provider/provider.dart';
+import 'package:vinyl/servers/InfoProvider.dart';
 import 'package:vinyl/views/Credits.dart';
+import 'package:vinyl/views/ListWidgets.dart';
 
 class MainView extends StatefulWidget {
   const MainView({Key key}) : super(key: key);
@@ -9,21 +13,35 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin {
+  // Views
   TabController _controller;
+
+  // Provider
+  final FlutterAudioQuery audioQuery = FlutterAudioQuery();
+  List<SongInfo> songs = [];
 
   @override
   void initState() {
     super.initState();
     _controller = TabController(length: 3, vsync: this, initialIndex: 0);
+    getTracks();
+  }
+
+  void getTracks() async{
+    songs=await audioQuery.getSongs();
+    setState(() {
+      songs=songs;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
+    //Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
+
+    return Scaffold(
         appBar: AppBar(
-          title: Text('Vinyl'),
+          title: Text('Vinyl --- ' + Provider.of<InfoProvider>(context).getCurrentIndex().toString()),
           backgroundColor: Colors.redAccent,
           elevation: 10.0,
           primary: true,
@@ -64,13 +82,11 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
             controller: _controller,
             children: [
               // todas las paginas a mostrar
-              Center(child: Text('Songs List'),),
+              TrackList(),
               Center(child: Text('Albums List'),),
               Center(child: Text('Artists List'),),
-
             ]
         ),
-      ),
     );
   }
 }
