@@ -1,4 +1,4 @@
-//TODO: warning!! this sample uses -> audioplayers: ^0.16.1
+//TODO: warning!! this sample uses -> just_audio: ^0.4.4
 
 import 'dart:io';
 

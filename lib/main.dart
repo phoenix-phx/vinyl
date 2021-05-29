@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vinyl/tests/audioPlayer.dart';
 import 'package:vinyl/tests/tracks.dart';
+import 'package:vinyl/views/MainView.dart';
 import 'package:vinyl/views/splash.dart';
 
 void main() {
@@ -18,7 +19,9 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Splash()
+        routes: {
+          '/': (_) => MainView()
+        },
     );
   }
 }
