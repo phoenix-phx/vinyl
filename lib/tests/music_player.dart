@@ -51,12 +51,13 @@ class _MusicPlayerState extends State<MusicPlayer> {
                         fontSize: 12.5,
                         fontWeight: FontWeight.w500)),
               ),
+              /*
               Slider(
                   inactiveColor: Colors.black12,
                   activeColor: Colors.black,
                   //value: value, onChanged: onChanged
               )
-
+*/
             ],
           ),
         ),

@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:audioquery_demo/music_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
+
+import 'music_player.dart';
 
 class Tracks extends StatefulWidget {
   //const Tracks({Key key}) : super(key: key);
