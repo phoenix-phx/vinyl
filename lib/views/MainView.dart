@@ -20,6 +20,11 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
   final FlutterAudioQuery audioQuery = FlutterAudioQuery();
   List<SongInfo> songs = [];
 
+  Map<String, List<SongInfo>> albums = Map();
+  List<String> albumNames = [];
+  Map<String, List<SongInfo>> artists = Map();
+  List<String> artistNames = [];
+
   @override
   void initState() {
     super.initState();
@@ -34,9 +39,43 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
     });
   }
 
+  void getAllLists(){
+    // albums
+    for(var song in songs){
+      if(!albums.containsKey(song.album)){
+        albums[song.album] = [song];
+        albumNames.add(song.album);
+      }
+      else{
+        albums[song.album].add(song);
+      }
+    }
+
+    // artists
+    for(var song in songs){
+      if(!artists.containsKey(song.artist)){
+        artists[song.artist] = [song];
+        artistNames.add(song.artist);
+      }
+      else{
+        artists[song.artist].add(song);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    getAllLists();
     Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
+
+    albumNames.sort();
+    Provider.of<InfoProvider>(context, listen: false).setAlbumsList(albums);
+    Provider.of<InfoProvider>(context, listen: false).setAlbumNames(albumNames);
+
+    artistNames.sort();
+    Provider.of<InfoProvider>(context, listen: false).setArtistsList(artists);
+    Provider.of<InfoProvider>(context, listen: false).setArtistNames(artistNames);
+
     //Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
 
     return Scaffold(
@@ -83,8 +122,8 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
             children: [
               // todas las paginas a mostrar
               TrackList(),
-              Center(child: Text('Albums List'),),
-              Center(child: Text('Artists List'),),
+              AlbumList(),
+              ArtistList(),
             ]
         ),
     );
