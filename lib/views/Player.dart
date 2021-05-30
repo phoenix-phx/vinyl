@@ -24,6 +24,7 @@ class PlayerState extends State<Player> {
   String currentTime = '', endTime = '';
   final AudioPlayer player = AudioPlayer();
   bool isPlaying = false;
+  bool isLooping = false;
 
   @override
   void initState() {
@@ -50,6 +51,19 @@ class PlayerState extends State<Player> {
     }
   }
 
+  void Looping() async{
+    setState(() {
+      isLooping = !isLooping;
+    });
+
+    if(isLooping){
+      await player.setLoopMode(LoopMode.one);
+    }
+    else{
+      await player.setLoopMode(LoopMode.off);
+    }
+  }
+
   void setSong(SongInfo songInfo) async {
     widget.songInfo = songInfo;
     await player.setUrl(widget.songInfo.uri);
@@ -70,6 +84,7 @@ class PlayerState extends State<Player> {
     print("End Time: $endTime");
 
     isPlaying = false;
+    isLooping = false;
     changeStatus();
     player.positionStream.listen((duration) {
       currentValue = duration.inMilliseconds.toDouble();
@@ -179,6 +194,20 @@ class PlayerState extends State<Player> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    GestureDetector(
+                      child: Icon(
+                        (isLooping) ? Icons.repeat_one: Icons.repeat,
+                        color: Colors.grey,
+                        size: 40,
+                      ),
+                      behavior: HitTestBehavior.translucent,
+                      onTap: (){
+                        setState(() {
+                          Looping();
+                          print('loop $isLooping');
+                        });
+                      },
+                    ),
                     GestureDetector(
                       child: Icon(
                         Icons.skip_previous,
