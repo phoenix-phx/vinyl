@@ -39,33 +39,39 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
     });
   }
 
-  void getAllLists(){
-    // albums
-    for(var song in songs){
-      if(!albums.containsKey(song.album)){
-        albums[song.album] = [song];
-        albumNames.add(song.album);
+  void getAllLists(BuildContext context){
+    if(Provider.of<InfoProvider>(context, listen: false).isLoaded() < 2) {
+      print("Ha entrao y salio pana");
+      // albums
+      for (var song in songs) {
+        if (!albums.containsKey(song.album)) {
+          albums[song.album] = [song];
+          albumNames.add(song.album);
+        }
+        else {
+          albums[song.album].add(song);
+        }
       }
-      else{
-        albums[song.album].add(song);
-      }
-    }
 
-    // artists
-    for(var song in songs){
-      if(!artists.containsKey(song.artist)){
-        artists[song.artist] = [song];
-        artistNames.add(song.artist);
+      // artists
+      for (var song in songs) {
+        if (!artists.containsKey(song.artist)) {
+          artists[song.artist] = [song];
+          artistNames.add(song.artist);
+        }
+        else {
+          artists[song.artist].add(song);
+        }
       }
-      else{
-        artists[song.artist].add(song);
-      }
+      print(artists);
+      print(albums);
+      Provider.of<InfoProvider>(context, listen: false).setLoadedState();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    getAllLists();
+    getAllLists(context);
     Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
 
     albumNames.sort();
@@ -80,7 +86,7 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
 
     return Scaffold(
         appBar: AppBar(
-          title: Text('Vinyl --- ' + Provider.of<InfoProvider>(context).getCurrentIndex().toString()),
+          title: Text('Vinyl --- ' + Provider.of<InfoProvider>(context).getCurrentIndex().toString() + " --- " + Provider.of<InfoProvider>(context).isLoaded().toString()),
           backgroundColor: Colors.redAccent,
           elevation: 10.0,
           primary: true,

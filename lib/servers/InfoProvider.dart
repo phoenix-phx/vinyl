@@ -4,6 +4,7 @@ import 'package:flutter_audio_query/flutter_audio_query.dart';
 class InfoProvider extends ChangeNotifier{
   List<SongInfo> _songsList = [];
   int _currentIndex = 0;
+  int _loaded = 0;
 
   Map<String, List<SongInfo>> _albumsList = Map();
   List<String> _albumsNames = [];
@@ -64,5 +65,13 @@ class InfoProvider extends ChangeNotifier{
 
   void setArtistNames(List<String> names){
     this._artistNames = names;
+  }
+
+  int isLoaded(){
+    return _loaded;
+  }
+
+  void setLoadedState(){
+    _loaded++;
   }
 }

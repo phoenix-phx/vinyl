@@ -119,37 +119,11 @@ class _AlbumListState extends State<AlbumList> {
           title: Text(names[index]),
           subtitle: Text(albums[names[index]][0].artist),
           onTap: (){
-            /*
-            currentIndex=index;
-            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-
             Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => Player(
-                      songInfo: songs[currentIndex],
-                      changeTrack: (bool isNext){
-                        if(isNext){
-                          if(currentIndex != songs.length - 1){
-                            currentIndex++;
-                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-                            //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
-                          }
-                        }
-                        else{
-                          if(currentIndex != 0){
-                            currentIndex--;
-                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-                            //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
-                          }
-                        }
-                        key.currentState.setSong(songs[currentIndex]);
-                      },
-                      key: key,
-                    )
+                    builder: (context) => AlbumSongs(albums[names[index]], names[index])
                 )
             );
-
-             */
           },
         ),
         separatorBuilder: (context,index)=>Divider(),
@@ -157,6 +131,125 @@ class _AlbumListState extends State<AlbumList> {
     );
   }
 }
+
+// ignore: must_be_immutable
+class AlbumSongs extends StatefulWidget {
+  List<SongInfo> songs;
+  String albumName;
+
+  AlbumSongs(this.songs, this.albumName);
+
+  @override
+  _AlbumSongsState createState() => _AlbumSongsState(songs, albumName);
+}
+
+class _AlbumSongsState extends State<AlbumSongs> {
+  final FlutterAudioQuery audioQuery = FlutterAudioQuery();
+  final GlobalKey<PlayerState> key = GlobalKey<PlayerState>();
+
+  List<SongInfo> songs;
+  String albumName;
+  int currentIndex;
+
+  _AlbumSongsState(this.songs, this.albumName);
+
+  void changeTrack(bool isNext){
+    if(isNext){
+      if(currentIndex != songs.length - 1){
+        currentIndex++;
+      }
+    }
+    else{
+      if(currentIndex != 0){
+        currentIndex--;
+      }
+    }
+    key.currentState.setSong(songs[currentIndex]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    currentIndex = Provider.of<InfoProvider>(context).getCurrentIndex();
+    print("Current Provider Index (Build):" + Provider.of<InfoProvider>(context).getCurrentIndex().toString());
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Vinyl --- ' + Provider.of<InfoProvider>(context).getCurrentIndex().toString() + " --- " + albumName),
+        backgroundColor: Colors.redAccent,
+        elevation: 10.0,
+        primary: true,
+        actions: [
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: (){
+
+              }
+          ),
+          PopupMenuButton(
+            itemBuilder: (ctx) => [
+              PopupMenuItem(child: Text('Credits'), value: '1',),
+            ],
+            onSelected: (value){
+              setState(() {
+                switch(value){
+                  case '1':
+                    /*
+                    Route route = MaterialPageRoute(builder: (context) => Credits());
+                    Navigator.of(context).push(route);
+                     */
+                    break;
+                }
+              });
+            },
+          )
+        ],
+      ),
+
+      body: ListView.separated(
+          itemBuilder: (context, index) => ListTile(
+            leading: CircleAvatar(
+              backgroundImage: songs[index].albumArtwork == null ? AssetImage('assets/music_gradient.jpg') : FileImage(File(songs[index].albumArtwork)),
+            ),
+            title: Text(songs[index].title),
+            subtitle: Text(songs[index].artist),
+            onTap: (){
+              currentIndex=index;
+              Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
+
+              Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => Player(
+                        songInfo: songs[currentIndex],
+                        changeTrack: (bool isNext){
+                          if(isNext){
+                            if(currentIndex != songs.length - 1){
+                              currentIndex++;
+                              Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
+                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                            }
+                          }
+                          else{
+                            if(currentIndex != 0){
+                              currentIndex--;
+                              Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
+                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                            }
+                          }
+                          key.currentState.setSong(songs[currentIndex]);
+                        },
+                        key: key,
+                      )
+                  )
+              );
+            },
+          ),
+          separatorBuilder: (context,index)=>Divider(),
+          itemCount: songs.length
+      ),
+    );
+  }
+}
+
 
 
 class ArtistList extends StatefulWidget {
@@ -191,39 +284,12 @@ class _ArtistListState extends State<ArtistList> {
             backgroundImage: artists[names[index]][0].albumArtwork == null ? AssetImage('assets/music_gradient.jpg') : FileImage(File(artists[names[index]][0].albumArtwork)),
           ),
           title: Text(names[index]),
-          //subtitle: Text(artists[names[index]][0].artist),
           onTap: (){
-            /*
-            currentIndex=index;
-            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-
             Navigator.of(context).push(
                 MaterialPageRoute(
-                    builder: (context) => Player(
-                      songInfo: songs[currentIndex],
-                      changeTrack: (bool isNext){
-                        if(isNext){
-                          if(currentIndex != songs.length - 1){
-                            currentIndex++;
-                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-                            //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
-                          }
-                        }
-                        else{
-                          if(currentIndex != 0){
-                            currentIndex--;
-                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-                            //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
-                          }
-                        }
-                        key.currentState.setSong(songs[currentIndex]);
-                      },
-                      key: key,
-                    )
+                    builder: (context) => AlbumSongs(artists[names[index]], names[index])
                 )
             );
-
-             */
           },
         ),
         separatorBuilder: (context,index)=>Divider(),
@@ -232,4 +298,121 @@ class _ArtistListState extends State<ArtistList> {
   }
 }
 
+// ignore: must_be_immutable
+class ArtistSongs extends StatefulWidget {
+  List<SongInfo> songs;
+  String artistName;
+
+  ArtistSongs(this.songs, this.artistName);
+
+  @override
+  _ArtistSongsState createState() => _ArtistSongsState(songs, artistName);
+}
+
+class _ArtistSongsState extends State<ArtistSongs> {
+  final FlutterAudioQuery audioQuery = FlutterAudioQuery();
+  final GlobalKey<PlayerState> key = GlobalKey<PlayerState>();
+
+  List<SongInfo> songs;
+  String artistName;
+  int currentIndex;
+
+  _ArtistSongsState(this.songs, this.artistName);
+
+  void changeTrack(bool isNext){
+    if(isNext){
+      if(currentIndex != songs.length - 1){
+        currentIndex++;
+      }
+    }
+    else{
+      if(currentIndex != 0){
+        currentIndex--;
+      }
+    }
+    key.currentState.setSong(songs[currentIndex]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    currentIndex = Provider.of<InfoProvider>(context).getCurrentIndex();
+    print("Current Provider Index (Build):" + Provider.of<InfoProvider>(context).getCurrentIndex().toString());
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Vinyl --- ' + Provider.of<InfoProvider>(context).getCurrentIndex().toString() + " --- " + artistName),
+        backgroundColor: Colors.redAccent,
+        elevation: 10.0,
+        primary: true,
+        actions: [
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: (){
+
+              }
+          ),
+          PopupMenuButton(
+            itemBuilder: (ctx) => [
+              PopupMenuItem(child: Text('Credits'), value: '1',),
+            ],
+            onSelected: (value){
+              setState(() {
+                switch(value){
+                  case '1':
+                  /*
+                    Route route = MaterialPageRoute(builder: (context) => Credits());
+                    Navigator.of(context).push(route);
+                     */
+                    break;
+                }
+              });
+            },
+          )
+        ],
+      ),
+
+      body: ListView.separated(
+          itemBuilder: (context, index) => ListTile(
+            leading: CircleAvatar(
+              backgroundImage: songs[index].albumArtwork == null ? AssetImage('assets/music_gradient.jpg') : FileImage(File(songs[index].albumArtwork)),
+            ),
+            title: Text(songs[index].title),
+            subtitle: Text(songs[index].artist),
+            onTap: (){
+              currentIndex=index;
+              Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
+
+              Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => Player(
+                        songInfo: songs[currentIndex],
+                        changeTrack: (bool isNext){
+                          if(isNext){
+                            if(currentIndex != songs.length - 1){
+                              currentIndex++;
+                              Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
+                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                            }
+                          }
+                          else{
+                            if(currentIndex != 0){
+                              currentIndex--;
+                              Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
+                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                            }
+                          }
+                          key.currentState.setSong(songs[currentIndex]);
+                        },
+                        key: key,
+                      )
+                  )
+              );
+            },
+          ),
+          separatorBuilder: (context,index)=>Divider(),
+          itemCount: songs.length
+      ),
+    );
+  }
+}
 
