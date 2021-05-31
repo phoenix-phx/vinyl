@@ -90,6 +90,10 @@ class PlayerState extends State<Player> {
       currentValue = duration.inMilliseconds.toDouble();
       setState(() {
         currentTime = getDuration(currentValue);
+        if(currentValue>=maxValue){
+          //print('FIN');
+          widget.changeTrack(true);
+        }
       });
     });
     /*
@@ -182,6 +186,7 @@ class PlayerState extends State<Player> {
                   setState(() {
                     currentValue = value;
                     player.seek(Duration(milliseconds: currentValue.round()));
+
                   });
                 }
             ),
@@ -253,7 +258,7 @@ class PlayerState extends State<Player> {
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
-                      changeStatus(widget.songInfo.uri);
+                      changeStatus();
                     });
                   },
                 ),
