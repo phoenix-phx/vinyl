@@ -90,10 +90,13 @@ class PlayerState extends State<Player> {
       currentValue = duration.inMilliseconds.toDouble();
       setState(() {
         currentTime = getDuration(currentValue);
+        // TODO: aun existe el bug del slider
+        /*
         if(currentValue>=maxValue){
           //print('FIN');
-          widget.changeTrack(true);
+          widget.changeTrack(true); // la nueva declaracion para llamar a change track esta en el metodo onChanged del slider
         }
+        */
       });
     });
     /*
@@ -187,7 +190,11 @@ class PlayerState extends State<Player> {
                   setState(() {
                     currentValue = value;
                     player.seek(Duration(milliseconds: currentValue.round()));
-
+                    if(currentValue>=maxValue){
+                      //print('FIN');
+                      // TODO: aun existe el bug del slider en esta parte
+                      widget.changeTrack(context, true, true); // la nueva manera de cambiar un track: (BuildContext context, bool isNext, bool random)
+                    }
                   });
                 }
             ),
