@@ -20,18 +20,35 @@ class _TrackListState extends State<TrackList> {
   List<SongInfo> songs;
   int currentIndex;
 
-  void changeTrack(bool isNext){
-    if(isNext){
-      if(currentIndex != songs.length - 1){
-        currentIndex++;
+  void changeTrack (BuildContext context, bool isNext, bool random){
+    if(!random) {
+      if (isNext) {
+        if (currentIndex != songs.length - 1) {
+          currentIndex++;
+          Provider.of<InfoProvider>(
+              context, listen: false).setCurrentIndex(
+              currentIndex);
+          //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+        }
       }
+      else {
+        if (currentIndex != 0) {
+          currentIndex--;
+          Provider.of<InfoProvider>(
+              context, listen: false).setCurrentIndex(
+              currentIndex);
+          //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+        }
+      }
+      key.currentState.setSong(songs[currentIndex]);
+      Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
     }
     else{
-      if(currentIndex != 0){
-        currentIndex--;
-      }
+      print("entra a la siguiente cancion");
+      Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+      key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+      Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
     }
-    key.currentState.setSong(songs[currentIndex]);
   }
 
   @override
@@ -49,28 +66,45 @@ class _TrackListState extends State<TrackList> {
           subtitle: Text(songs[index].artist),
           onTap: (){
             currentIndex=index;
+            // kill last song
+            Provider.of<InfoProvider>(context, listen: false).getCurrentSong().stop();
+            Provider.of<InfoProvider>(context, listen: false).getCurrentSong().dispose();
+
             Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
 
             Navigator.of(context).push(
                 MaterialPageRoute(
                     builder: (context) => Player(
                       songInfo: songs[currentIndex],
-                      changeTrack: (bool isNext){
-                        if(isNext){
-                          if(currentIndex != songs.length - 1){
-                            currentIndex++;
-                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-                            //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                      changeTrack: (BuildContext context, bool isNext, bool random){
+                        if(!random) {
+                          if (isNext) {
+                            if (currentIndex != songs.length - 1) {
+                              currentIndex++;
+                              Provider.of<InfoProvider>(
+                                  context, listen: false).setCurrentIndex(
+                                  currentIndex);
+                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                            }
                           }
+                          else {
+                            if (currentIndex != 0) {
+                              currentIndex--;
+                              Provider.of<InfoProvider>(
+                                  context, listen: false).setCurrentIndex(
+                                  currentIndex);
+                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                            }
+                          }
+                          key.currentState.setSong(songs[currentIndex]);
+                          Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
                         }
                         else{
-                          if(currentIndex != 0){
-                            currentIndex--;
-                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-                            //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
-                          }
+                          print("entra a la siguiente cancion");
+                          Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+                          key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                          Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
                         }
-                        key.currentState.setSong(songs[currentIndex]);
                       },
                       key: key,
                     )
@@ -169,6 +203,7 @@ class _AlbumSongsState extends State<AlbumSongs> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
     currentIndex = Provider.of<InfoProvider>(context).getCurrentIndex();
     print("Current Provider Index (Build):" + Provider.of<InfoProvider>(context).getCurrentIndex().toString());
 
@@ -214,28 +249,45 @@ class _AlbumSongsState extends State<AlbumSongs> {
             subtitle: Text(songs[index].artist),
             onTap: (){
               currentIndex=index;
+              // kill last song
+              Provider.of<InfoProvider>(context, listen: false).getCurrentSong().stop();
+              Provider.of<InfoProvider>(context, listen: false).getCurrentSong().dispose();
+
               Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
 
               Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (context) => Player(
                         songInfo: songs[currentIndex],
-                        changeTrack: (bool isNext){
-                          if(isNext){
-                            if(currentIndex != songs.length - 1){
-                              currentIndex++;
-                              Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                        changeTrack: (BuildContext context, bool isNext, bool random){
+                          if(!random) {
+                            if (isNext) {
+                              if (currentIndex != songs.length - 1) {
+                                currentIndex++;
+                                Provider.of<InfoProvider>(
+                                    context, listen: false).setCurrentIndex(
+                                    currentIndex);
+                                //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                              }
                             }
+                            else {
+                              if (currentIndex != 0) {
+                                currentIndex--;
+                                Provider.of<InfoProvider>(
+                                    context, listen: false).setCurrentIndex(
+                                    currentIndex);
+                                //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                              }
+                            }
+                            key.currentState.setSong(songs[currentIndex]);
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
                           }
                           else{
-                            if(currentIndex != 0){
-                              currentIndex--;
-                              Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
-                            }
+                            print("entra a la siguiente cancion");
+                            Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+                            key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
                           }
-                          key.currentState.setSong(songs[currentIndex]);
                         },
                         key: key,
                       )
@@ -271,7 +323,7 @@ class _ArtistListState extends State<ArtistList> {
   @override
   Widget build(BuildContext context) {
     artists = Provider.of<InfoProvider>(context).getArtists();
-    print("Albums en servicio: $artists");
+    print("Artists en servicio: $artists");
     names = Provider.of<InfoProvider>(context).getArtistNames();
     print("Names: $names");
 
@@ -335,6 +387,7 @@ class _ArtistSongsState extends State<ArtistSongs> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
     currentIndex = Provider.of<InfoProvider>(context).getCurrentIndex();
     print("Current Provider Index (Build):" + Provider.of<InfoProvider>(context).getCurrentIndex().toString());
 
@@ -380,28 +433,45 @@ class _ArtistSongsState extends State<ArtistSongs> {
             subtitle: Text(songs[index].artist),
             onTap: (){
               currentIndex=index;
+              // kill last song
+              Provider.of<InfoProvider>(context, listen: false).getCurrentSong().stop();
+              Provider.of<InfoProvider>(context, listen: false).getCurrentSong().dispose();
+
               Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
 
               Navigator.of(context).push(
                   MaterialPageRoute(
                       builder: (context) => Player(
                         songInfo: songs[currentIndex],
-                        changeTrack: (bool isNext){
-                          if(isNext){
-                            if(currentIndex != songs.length - 1){
-                              currentIndex++;
-                              Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                        changeTrack: (BuildContext context, bool isNext, bool random){
+                          if(!random) {
+                            if (isNext) {
+                              if (currentIndex != songs.length - 1) {
+                                currentIndex++;
+                                Provider.of<InfoProvider>(
+                                    context, listen: false).setCurrentIndex(
+                                    currentIndex);
+                                //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                              }
                             }
+                            else {
+                              if (currentIndex != 0) {
+                                currentIndex--;
+                                Provider.of<InfoProvider>(
+                                    context, listen: false).setCurrentIndex(
+                                    currentIndex);
+                                //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                              }
+                            }
+                            key.currentState.setSong(songs[currentIndex]);
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
                           }
                           else{
-                            if(currentIndex != 0){
-                              currentIndex--;
-                              Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
-                            }
+                            print("entra a la siguiente cancion");
+                            Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+                            key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
                           }
-                          key.currentState.setSong(songs[currentIndex]);
                         },
                         key: key,
                       )

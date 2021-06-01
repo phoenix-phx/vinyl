@@ -109,8 +109,9 @@ class PlayerState extends State<Player> {
 
   @override
   Widget build(BuildContext context) {
-
     var screen = MediaQuery.of(context).size;
+    Provider.of<InfoProvider>(context, listen: false).setCurrentSong(player);
+
     return Scaffold(
       backgroundColor: Colors.redAccent,
       body: Column(
@@ -240,7 +241,7 @@ class PlayerState extends State<Player> {
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
-                      widget.changeTrack(false);
+                      widget.changeTrack(context, false, true);
                     });
                   },
                 ),
@@ -253,7 +254,7 @@ class PlayerState extends State<Player> {
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
-                      changeStatus(widget.songInfo.uri);
+                      changeStatus();
                     });
                   },
                 ),
@@ -266,7 +267,7 @@ class PlayerState extends State<Player> {
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
-                      widget.changeTrack(true);
+                      widget.changeTrack(context, true, true);
                     });
                   },
                 ),
