@@ -18,6 +18,9 @@ class InfoProvider extends ChangeNotifier{
   Map<String, List<SongInfo>> _artistList = Map();
   List<String> _artistNames = [];
 
+  bool _loop = false;
+  bool _random = false;
+
 
   List<SongInfo> getSongsList(){
     return _songsList;
@@ -120,5 +123,21 @@ class InfoProvider extends ChangeNotifier{
       }
     }
     notifyListeners();
+  }
+
+  bool isLoop(){
+    return _loop;
+  }
+
+  void setLoop(bool newLoop){
+    this._loop = newLoop;
+  }
+
+  bool isRandom(){
+    return _random;
+  }
+
+  void setRandom(bool newRandom){
+    this._random = newRandom;
   }
 }
