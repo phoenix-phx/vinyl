@@ -119,7 +119,7 @@ class PlayerState extends State<Player> {
     var screen = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: Colors.redAccent,
+      //backgroundColor: Colors.white,
       body: Column(
         children: [
           navBar(context),
@@ -137,7 +137,7 @@ class PlayerState extends State<Player> {
             ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(100),
-              color: Colors.redAccent,
+              color: Colors.black,
               boxShadow: [
                 BoxShadow(
                     color: Colors.black45,
@@ -160,7 +160,7 @@ class PlayerState extends State<Player> {
             child: Text(
                 widget.songInfo.title,
                 style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 20,
                     fontWeight: FontWeight.w600
                 )
@@ -171,7 +171,7 @@ class PlayerState extends State<Player> {
             child: Text(
                 widget.songInfo.artist,
                 style: TextStyle(
-                    color: Colors.white70,
+                    color: Colors.black54,
                     fontSize: 20,
                     fontWeight: FontWeight.w500
                 )
@@ -180,8 +180,8 @@ class PlayerState extends State<Player> {
           Container(
             margin: EdgeInsets.fromLTRB(15, 0, 0, 15),
             child: Slider(
-                inactiveColor: Colors.white60,
-                activeColor: Colors.white,
+                inactiveColor: Colors.black54,
+                activeColor: Colors.black,
                 min: minValue,
                 max: maxValue,
                 value: currentValue,
@@ -202,7 +202,7 @@ class PlayerState extends State<Player> {
                 Text(
                     currentTime,
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 12.5,
                         fontWeight: FontWeight.w500
                     )
@@ -210,7 +210,7 @@ class PlayerState extends State<Player> {
                 Text(
                     endTime,
                     style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontSize: 12.5,
                         fontWeight: FontWeight.w500
                     )
@@ -228,7 +228,7 @@ class PlayerState extends State<Player> {
                   child: Icon(
                     (isLooping) ? Icons.repeat_one: Icons.repeat,
                     color: Colors.grey,
-                    size: 45,
+                    size: 35,
                   ),
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
@@ -242,7 +242,7 @@ class PlayerState extends State<Player> {
                   child: Icon(
                     Icons.skip_previous,
                     color: Colors.black,
-                    size: 55,
+                    size: 45,
                   ),
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
@@ -255,7 +255,7 @@ class PlayerState extends State<Player> {
                   child: Icon(
                     (isPlaying) ? Icons.pause_circle_filled_rounded: Icons.play_circle_fill_rounded,
                     color: Colors.black,
-                    size: 75,
+                    size: 65,
                   ),
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
@@ -268,7 +268,7 @@ class PlayerState extends State<Player> {
                   child: Icon(
                     Icons.skip_next,
                     color: Colors.black,
-                    size: 55,
+                    size: 45,
                   ),
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
@@ -281,7 +281,7 @@ class PlayerState extends State<Player> {
                   child: Icon(
                     (isShuffle) ? Icons.shuffle : Icons.arrow_right_alt,
                     color: Colors.grey,
-                    size: 45,
+                    size: 35,
                   ),
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
@@ -310,7 +310,7 @@ Widget navBar(context){
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         NavBarItem(context,Icons.arrow_back),
-        Text('Vinyl', style: TextStyle(color: Colors.white,fontSize: 17,),),
+        //Text('Vinyl', style: TextStyle(color: Colors.white,fontSize: 17,),),
         NavBarItem(context,Icons.list),
       ],
     ),
@@ -337,7 +337,7 @@ Widget NavBarItem(context, IconData icon){
               blurRadius: 20
           ),
         ],
-        color: Colors.redAccent,borderRadius: BorderRadius.circular(10)),
+        color: Colors.black,borderRadius: BorderRadius.circular(10)),
     child:IconButton(
         icon: Icon(icon,color: Colors.white,),
         onPressed: (){
