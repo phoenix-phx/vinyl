@@ -25,6 +25,7 @@ class PlayerState extends State<Player> {
   final AudioPlayer player = AudioPlayer();
   bool isPlaying = false;
   bool isLooping = false;
+  bool isShuffle = false;
 
   @override
   void initState() {
@@ -49,6 +50,12 @@ class PlayerState extends State<Player> {
     else{
       player.pause();
     }
+  }
+
+  void Shuffle() async {
+    setState(() {
+      isShuffle = !isShuffle;
+    });
   }
 
   void Looping() async{
@@ -91,12 +98,12 @@ class PlayerState extends State<Player> {
       setState(() {
         currentTime = getDuration(currentValue);
         // TODO: aun existe el bug del slider
-        /*
+
         if(currentValue>=maxValue){
-          //print('FIN');
-          widget.changeTrack(true); // la nueva declaracion para llamar a change track esta en el metodo onChanged del slider
+          print('FIN');
+          widget.changeTrack(context, true, isShuffle);
+          // la nueva declaracion para llamar a change track esta en el metodo onChanged del slider
         }
-        */
       });
     });
     /*
@@ -190,11 +197,6 @@ class PlayerState extends State<Player> {
                   setState(() {
                     currentValue = value;
                     player.seek(Duration(milliseconds: currentValue.round()));
-                    if(currentValue>=maxValue){
-                      //print('FIN');
-                      // TODO: aun existe el bug del slider en esta parte
-                      widget.changeTrack(context, true, true); // la nueva manera de cambiar un track: (BuildContext context, bool isNext, bool random)
-                    }
                   });
                 }
             ),
@@ -253,7 +255,7 @@ class PlayerState extends State<Player> {
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
-                      widget.changeTrack(context, false, true);
+                      widget.changeTrack(context, false, isShuffle);
                     });
                   },
                 ),
@@ -279,7 +281,21 @@ class PlayerState extends State<Player> {
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
-                      widget.changeTrack(context, true, true);
+                      widget.changeTrack(context, true, isShuffle);
+                    });
+                  },
+                ),
+                GestureDetector(
+                  child: Icon(
+                    (isShuffle) ? Icons.shuffle : Icons.arrow_right_alt,
+                    color: Colors.grey,
+                    size: 45,
+                  ),
+                  behavior: HitTestBehavior.translucent,
+                  onTap: (){
+                    setState(() {
+                      Shuffle();
+                      print('random $isShuffle');
                     });
                   },
                 ),
