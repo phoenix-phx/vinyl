@@ -131,6 +131,7 @@ class InfoProvider extends ChangeNotifier{
 
   void setLoop(bool newLoop){
     this._loop = newLoop;
+    notifyListeners();
   }
 
   bool isRandom(){
@@ -139,5 +140,6 @@ class InfoProvider extends ChangeNotifier{
 
   void setRandom(bool newRandom){
     this._random = newRandom;
+    notifyListeners();
   }
 }
