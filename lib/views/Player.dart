@@ -106,14 +106,7 @@ class PlayerState extends State<Player> {
         }
       });
     });
-    /*
-    player.onAudioPositionChanged.listen((duration) {
-      currentValue = duration.inMilliseconds.toDouble();
-      setState(() {
-        currentTime = getDuration(currentValue);
-      });
-    });
-     */
+    Provider.of<InfoProvider>(context, listen: false).setCurrentSong(player);
   }
 
   String getDuration(double value){
@@ -124,7 +117,6 @@ class PlayerState extends State<Player> {
   @override
   Widget build(BuildContext context) {
     var screen = MediaQuery.of(context).size;
-    Provider.of<InfoProvider>(context, listen: false).setCurrentSong(player);
 
     return Scaffold(
       backgroundColor: Colors.redAccent,
@@ -318,15 +310,15 @@ Widget navBar(context){
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         NavBarItem(context,Icons.arrow_back),
-        Text('Music Player --- ' + Provider.of<InfoProvider>(context).getCurrentIndex().toString(),
-          style: TextStyle(color: Colors.white,fontSize: 17,),),
+        Text('Vinyl', style: TextStyle(color: Colors.white,fontSize: 17,),),
         NavBarItem(context,Icons.list),
       ],
     ),
   );
 }
 
-Widget NavBarItem(context,IconData icon){
+// ignore: non_constant_identifier_names
+Widget NavBarItem(context, IconData icon){
   return Container(
     height: 40,
     width: 40,
@@ -352,7 +344,6 @@ Widget NavBarItem(context,IconData icon){
           if(icon==Icons.arrow_back){
             Navigator.of(context).pop();
           }
-
         }
     ),
   );

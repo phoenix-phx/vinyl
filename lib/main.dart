@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:provider/provider.dart';
 import 'package:vinyl/servers/InfoProvider.dart';
-import 'package:vinyl/tests/audioPlayer.dart';
-import 'package:vinyl/tests/tracks.dart';
 import 'package:vinyl/views/MainView.dart';
-import 'package:vinyl/views/splash.dart';
 
 void main() {
   runApp(MyApp());

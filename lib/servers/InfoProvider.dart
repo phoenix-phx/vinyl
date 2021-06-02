@@ -5,6 +5,7 @@ import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
 
 class InfoProvider extends ChangeNotifier{
+  List<SongInfo> _finalSongsList = [];
   List<SongInfo> _songsList = [];
   int _currentIndex = 0;
   int _loaded = 0;
@@ -21,6 +22,14 @@ class InfoProvider extends ChangeNotifier{
   bool _loop = false;
   bool _random = false;
 
+  List<SongInfo> getFinalSongsList(){
+    return _finalSongsList;
+  }
+
+  void setFinalSongsList(List<SongInfo> songs){
+    this._finalSongsList = songs;
+    notifyListeners();
+  }
 
   List<SongInfo> getSongsList(){
     return _songsList;

@@ -53,7 +53,7 @@ class _TrackListState extends State<TrackList> {
 
   @override
   Widget build(BuildContext context) {
-    songs = Provider.of<InfoProvider>(context).getSongsList();
+    songs = Provider.of<InfoProvider>(context).getFinalSongsList();
     currentIndex = Provider.of<InfoProvider>(context).getCurrentIndex();
     print("Current Provider Index (Build):" + Provider.of<InfoProvider>(context).getCurrentIndex().toString());
 
@@ -209,17 +209,11 @@ class _AlbumSongsState extends State<AlbumSongs> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vinyl --- ' + Provider.of<InfoProvider>(context).getCurrentIndex().toString() + " --- " + albumName),
+        title: Text(albumName),
         backgroundColor: Colors.redAccent,
         elevation: 10.0,
         primary: true,
         actions: [
-          IconButton(
-              icon: Icon(Icons.search),
-              onPressed: (){
-
-              }
-          ),
           PopupMenuButton(
             itemBuilder: (ctx) => [
               PopupMenuItem(child: Text('Credits'), value: '1',),
@@ -393,17 +387,11 @@ class _ArtistSongsState extends State<ArtistSongs> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vinyl --- ' + Provider.of<InfoProvider>(context).getCurrentIndex().toString() + " --- " + artistName),
+        title: Text(artistName),
         backgroundColor: Colors.redAccent,
         elevation: 10.0,
         primary: true,
         actions: [
-          IconButton(
-              icon: Icon(Icons.search),
-              onPressed: (){
-
-              }
-          ),
           PopupMenuButton(
             itemBuilder: (ctx) => [
               PopupMenuItem(child: Text('Credits'), value: '1',),

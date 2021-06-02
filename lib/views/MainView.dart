@@ -37,6 +37,9 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
     setState(() {
       songs=songs;
     });
+    Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
+    Provider.of<InfoProvider>(context, listen: false).setFinalSongsList(songs);
+    getAllLists(context);
   }
 
   void getAllLists(BuildContext context){
@@ -66,37 +69,45 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
       print(artists);
       print(albums);
       Provider.of<InfoProvider>(context, listen: false).setLoadedState();
+
+      albumNames.sort();
+      Provider.of<InfoProvider>(context, listen: false).setAlbumsList(albums);
+      Provider.of<InfoProvider>(context, listen: false).setAlbumNames(albumNames);
+
+      artistNames.sort();
+      Provider.of<InfoProvider>(context, listen: false).setArtistsList(artists);
+      Provider.of<InfoProvider>(context, listen: false).setArtistNames(artistNames);
     }
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    Provider.of<InfoProvider>(context, listen: false).getSongsList().clear();
+    Provider.of<InfoProvider>(context, listen: false).getAlbums().clear();
+    Provider.of<InfoProvider>(context, listen: false).getArtists().clear();
+    Provider.of<InfoProvider>(context, listen: false).getAlbumNames().clear();
+    Provider.of<InfoProvider>(context, listen: false).getArtistNames().clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    getAllLists(context);
-    Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
-
-    albumNames.sort();
-    Provider.of<InfoProvider>(context, listen: false).setAlbumsList(albums);
-    Provider.of<InfoProvider>(context, listen: false).setAlbumNames(albumNames);
-
-    artistNames.sort();
-    Provider.of<InfoProvider>(context, listen: false).setArtistsList(artists);
-    Provider.of<InfoProvider>(context, listen: false).setArtistNames(artistNames);
-
-    //Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
-
     return Scaffold(
         appBar: AppBar(
-          title: Text('Vinyl --- ' + Provider.of<InfoProvider>(context).getCurrentIndex().toString() + " --- " + Provider.of<InfoProvider>(context).isLoaded().toString()),
+          title: Text('Vinyl'),
           backgroundColor: Colors.redAccent,
           elevation: 10.0,
           primary: true,
           actions: [
+            /*
             IconButton(
                 icon: Icon(Icons.search),
                 onPressed: (){
 
                 }
             ),
+             */
             PopupMenuButton(
                 itemBuilder: (ctx) => [
                   PopupMenuItem(child: Text('Credits'), value: '1',),
