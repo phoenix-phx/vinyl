@@ -160,6 +160,72 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
               ArtistList(),
             ]
         ),
+
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.black,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: AssetImage('assets/music_gradient.jpg'),
+                    ),
+                    SizedBox(width: 10, height: 0,),
+                    Text(
+                      'Prueba',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onTap: (){
+                  setState(() {
+                    print("I've been tapped!");
+                  });
+                },
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                      icon: Icon(
+                        Icons.skip_previous,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      onPressed: (){
+
+                      }
+                  ),
+                  IconButton(
+                      icon: Icon(
+                        Icons.play_circle_fill_rounded,
+                        color: Colors.white,
+                        size: 35,
+                      ),
+                      onPressed: (){
+
+                      }
+                  ),
+                  IconButton(
+                      icon: Icon(
+                        Icons.skip_next,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                      onPressed: (){
+
+                      }
+                  ),
+                ],
+              ),
+            ],
+
+          ),
+        )
     );
   }
 }
