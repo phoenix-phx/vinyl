@@ -24,7 +24,7 @@ class PlayerState extends State<Player> {
   String currentTime = '', endTime = '';
   final AudioPlayer player = AudioPlayer();
   bool isPlaying = false;
-  bool isLooping = false;
+  //bool isLooping = false;
   bool isShuffle = false;
 
   @override
@@ -52,23 +52,12 @@ class PlayerState extends State<Player> {
     }
   }
 
-  void Shuffle() async {
-    setState(() {
-      isShuffle = !isShuffle;
-    });
-  }
-
-  void Looping() async{
-    setState(() {
-      isLooping = !isLooping;
-    });
-
-    if(isLooping){
-      await player.setLoopMode(LoopMode.one);
-    }
-    else{
-      await player.setLoopMode(LoopMode.off);
-    }
+  void Looping(bool bl) async {
+   if(bl){
+     await player.setLoopMode(LoopMode.one);
+   }else{
+     await player.setLoopMode(LoopMode.off);
+   }
   }
 
   void setSong(SongInfo songInfo) async {
@@ -91,18 +80,15 @@ class PlayerState extends State<Player> {
     print("End Time: $endTime");
 
     isPlaying = false;
-    isLooping = false;
+    //isLooping = false;
     changeStatus();
     player.positionStream.listen((duration) {
       currentValue = duration.inMilliseconds.toDouble();
       setState(() {
         currentTime = getDuration(currentValue);
-        // TODO: aun existe el bug del slider
-
         if(currentValue>=maxValue){
           print('FIN');
           widget.changeTrack(context, true, isShuffle);
-          // la nueva declaracion para llamar a change track esta en el metodo onChanged del slider
         }
       });
     });
@@ -117,7 +103,10 @@ class PlayerState extends State<Player> {
   @override
   Widget build(BuildContext context) {
     var screen = MediaQuery.of(context).size;
-
+    var bl = Provider.of<InfoProvider>(context, listen: false).isLoop();
+    var bs = Provider.of<InfoProvider>(context, listen: false).isRandom();
+    Looping(bl);
+    print('looping $bl');
     return Scaffold(
       //backgroundColor: Colors.white,
       body: Column(
@@ -226,15 +215,22 @@ class PlayerState extends State<Player> {
               children: [
                 GestureDetector(
                   child: Icon(
-                    (isLooping) ? Icons.repeat_one: Icons.repeat,
+                    (bl) ? Icons.repeat_one: Icons.repeat,
                     color: Colors.grey,
                     size: 35,
                   ),
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
-                    setState(() {
-                      Looping();
-                      print('loop $isLooping');
+                    setState(() async {
+                      bl = !bl;
+                      Provider.of<InfoProvider>(context, listen: false).setLoop(bl);
+                      if(Provider.of<InfoProvider>(context, listen: false).isLoop()){
+                        print('REPETIR');
+                        await player.setLoopMode(LoopMode.one);
+                      }
+                      else{
+                        await player.setLoopMode(LoopMode.off);
+                      }
                     });
                   },
                 ),
@@ -279,15 +275,20 @@ class PlayerState extends State<Player> {
                 ),
                 GestureDetector(
                   child: Icon(
-                    (isShuffle) ? Icons.shuffle : Icons.arrow_right_alt,
+                    (bs) ? Icons.shuffle : Icons.arrow_right_alt,
                     color: Colors.grey,
                     size: 35,
                   ),
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
-                      Shuffle();
-                      print('random $isShuffle');
+                      bs = !bs;
+                      Provider.of<InfoProvider>(context, listen: false).setRandom(bs);
+                      print('ALEATORIO');
+                      isShuffle = bs;
+
+
+                      //print('random $isShuffle');
                     });
                   },
                 ),
