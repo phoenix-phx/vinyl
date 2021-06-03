@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:provider/provider.dart';
 import 'package:vinyl/servers/InfoProvider.dart';
@@ -93,10 +94,26 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
+    /*
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+      // statusBarColor: Colors.white,
+      // iOS
+      statusBarBrightness: Brightness.dark,
+
+      // android
+      statusBarIconBrightness: Brightness.light,
+
+    ));
+
+     */
     return Scaffold(
         appBar: AppBar(
+          backwardsCompatibility: false,
+          systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarIconBrightness: Brightness.light
+          ),
           title: Text('Vinyl'),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Colors.black,
           elevation: 10.0,
           primary: true,
           actions: [

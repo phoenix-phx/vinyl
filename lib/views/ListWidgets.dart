@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:provider/provider.dart';
 import 'package:vinyl/servers/InfoProvider.dart';
@@ -209,8 +210,12 @@ class _AlbumSongsState extends State<AlbumSongs> {
 
     return Scaffold(
       appBar: AppBar(
+        backwardsCompatibility: false,
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarIconBrightness: Brightness.light
+        ),
         title: Text(albumName),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: Colors.black,
         elevation: 10.0,
         primary: true,
         actions: [
@@ -387,8 +392,12 @@ class _ArtistSongsState extends State<ArtistSongs> {
 
     return Scaffold(
       appBar: AppBar(
+        backwardsCompatibility: false,
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarIconBrightness: Brightness.light
+        ),
         title: Text(artistName),
-        backgroundColor: Colors.redAccent,
+        backgroundColor: Colors.black,
         elevation: 10.0,
         primary: true,
         actions: [

@@ -20,6 +20,11 @@ class _MyAppState extends State<MyApp> {
       providers: [ChangeNotifierProvider.value(value: InfoProvider())],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+              //accentColor: Colors.black12,
+              //primaryColor: Colors.black,
+              splashColor: Colors.blue
+          ),
           routes: {
             '/': (_) => MainView()
           },
