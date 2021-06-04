@@ -16,7 +16,7 @@ class TrackList extends StatefulWidget {
 
 class _TrackListState extends State<TrackList> {
   final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-  final GlobalKey<PlayerState> key = GlobalKey<PlayerState>();
+  final GlobalKey<PlayerStateClass> key = GlobalKey<PlayerStateClass>();
 
   List<SongInfo> songs;
   int currentIndex;
@@ -43,12 +43,14 @@ class _TrackListState extends State<TrackList> {
       }
       key.currentState.setSong(songs[currentIndex]);
       Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
+      Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songs[currentIndex]);
     }
     else{
       print("entra a la siguiente cancion");
       Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
       key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
       Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
+      Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songs[currentIndex]);
     }
   }
 
@@ -99,12 +101,14 @@ class _TrackListState extends State<TrackList> {
                           }
                           key.currentState.setSong(songs[currentIndex]);
                           Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
+                          Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songs[currentIndex]);
                         }
                         else{
                           print("entra a la siguiente cancion");
                           Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
                           key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
                           Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
+                          Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songs[currentIndex]);
                         }
                       },
                       key: key,
@@ -129,7 +133,7 @@ class AlbumList extends StatefulWidget {
 
 class _AlbumListState extends State<AlbumList> {
   final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-  final GlobalKey<PlayerState> key = GlobalKey<PlayerState>();
+  final GlobalKey<PlayerStateClass> key = GlobalKey<PlayerStateClass>();
 
   Map<String, List<SongInfo>> albums;
   List<String> names;
@@ -180,7 +184,7 @@ class AlbumSongs extends StatefulWidget {
 
 class _AlbumSongsState extends State<AlbumSongs> {
   final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-  final GlobalKey<PlayerState> key = GlobalKey<PlayerState>();
+  final GlobalKey<PlayerStateClass> key = GlobalKey<PlayerStateClass>();
 
   List<SongInfo> songs;
   String albumName;
@@ -280,12 +284,14 @@ class _AlbumSongsState extends State<AlbumSongs> {
                             }
                             key.currentState.setSong(songs[currentIndex]);
                             Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songs[currentIndex]);
                           }
                           else{
                             print("entra a la siguiente cancion");
                             Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
                             key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
                             Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songs[currentIndex]);
                           }
                         },
                         key: key,
@@ -312,7 +318,7 @@ class ArtistList extends StatefulWidget {
 
 class _ArtistListState extends State<ArtistList> {
   final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-  final GlobalKey<PlayerState> key = GlobalKey<PlayerState>();
+  final GlobalKey<PlayerStateClass> key = GlobalKey<PlayerStateClass>();
 
   Map<String, List<SongInfo>> artists;
   List<String> names;
@@ -362,7 +368,7 @@ class ArtistSongs extends StatefulWidget {
 
 class _ArtistSongsState extends State<ArtistSongs> {
   final FlutterAudioQuery audioQuery = FlutterAudioQuery();
-  final GlobalKey<PlayerState> key = GlobalKey<PlayerState>();
+  final GlobalKey<PlayerStateClass> key = GlobalKey<PlayerStateClass>();
 
   List<SongInfo> songs;
   String artistName;
@@ -462,12 +468,14 @@ class _ArtistSongsState extends State<ArtistSongs> {
                             }
                             key.currentState.setSong(songs[currentIndex]);
                             Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songs[currentIndex]);
                           }
                           else{
                             print("entra a la siguiente cancion");
                             Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
                             key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
                             Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songs[currentIndex]);
                           }
                         },
                         key: key,

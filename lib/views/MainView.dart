@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
@@ -94,18 +96,7 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
 
   @override
   Widget build(BuildContext context) {
-    /*
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
-      // statusBarColor: Colors.white,
-      // iOS
-      statusBarBrightness: Brightness.dark,
-
-      // android
-      statusBarIconBrightness: Brightness.light,
-
-    ));
-
-     */
+    var size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
           backwardsCompatibility: false,
@@ -171,12 +162,21 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     CircleAvatar(
-                      backgroundImage: AssetImage('assets/music_gradient.jpg'),
+                      backgroundImage: (Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo() == null)
+                        ? AssetImage('assets/music_gradient.jpg')
+                        : (Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo().albumArtwork == null)
+                          ? AssetImage('assets/music_gradient.jpg')
+                          : FileImage(File(Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo().albumArtwork,)),
                     ),
                     SizedBox(width: 10, height: 0,),
-                    Text(
-                      'Prueba',
-                      style: TextStyle(color: Colors.white),
+                    Container(
+                      width: size.width/3,
+                      child: Text(
+                        (Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo() == null)
+                          ? 'None' : Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo().title,
+                        style: TextStyle(color: Colors.white),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
@@ -196,18 +196,30 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
                         color: Colors.white,
                         size: 20,
                       ),
-                      onPressed: (){
-
+                      onPressed: () {
+                          if(!Provider.of<InfoProvider>(context, listen: false).isRandom()) {
+                              if (Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() != 0) {
+                                Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() - 1);
+                              }
+                            Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getSongsList()[Provider.of<InfoProvider>(context, listen: false).getCurrentIndex()]);
+                          }
+                          else{
+                            Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+                            // key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                            Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                          }
                       }
                   ),
                   IconButton(
-                      icon: Icon(
-                        Icons.play_circle_fill_rounded,
+                      icon: Icon(Provider.of<InfoProvider>(context).getControlBarIcon(),
                         color: Colors.white,
                         size: 35,
                       ),
                       onPressed: (){
-
+                        (Provider.of<InfoProvider>(context, listen: false).isPlaying())
+                          ? Provider.of<InfoProvider>(context, listen: false).getCurrentSong().pause()
+                          : Provider.of<InfoProvider>(context, listen: false).getCurrentSong().play();
+                        Provider.of<InfoProvider>(context, listen: false).setPlaying(!Provider.of<InfoProvider>(context, listen: false).isPlaying());
                       }
                   ),
                   IconButton(
@@ -217,7 +229,17 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
                         size: 25,
                       ),
                       onPressed: (){
-
+                        if(!Provider.of<InfoProvider>(context, listen: false).isRandom()) {
+                          if (Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() != Provider.of<InfoProvider>(context, listen: false).getSongsList().length - 1) {
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() + 1);
+                          }
+                          Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getSongsList()[Provider.of<InfoProvider>(context, listen: false).getCurrentIndex()]);
+                        }
+                        else{
+                          Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+                          // key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                          Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                        }
                       }
                   ),
                 ],

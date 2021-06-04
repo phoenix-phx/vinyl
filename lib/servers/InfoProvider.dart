@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:vinyl/views/Player.dart';
 
 class InfoProvider extends ChangeNotifier{
   List<SongInfo> _finalSongsList = [];
@@ -11,6 +12,7 @@ class InfoProvider extends ChangeNotifier{
   int _loaded = 0;
 
   AudioPlayer _currentSong = AudioPlayer();
+  SongInfo _currentSongInfo;
   SongInfo _nextSong;
 
   Map<String, List<SongInfo>> _albumsList = Map();
@@ -21,6 +23,10 @@ class InfoProvider extends ChangeNotifier{
 
   bool _loop = false;
   bool _random = false;
+  bool _playing = false;
+
+  IconData _controlBarIcon = Icons.play_circle_fill_rounded;
+  PlayerStateClass _currentPlayerClass;
 
   List<SongInfo> getFinalSongsList(){
     return _finalSongsList;
@@ -107,6 +113,15 @@ class InfoProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  SongInfo getCurrentSongInfo(){
+    return _currentSongInfo;
+  }
+
+  void setCurrentSongInfo(SongInfo song){
+    this._currentSongInfo = song;
+    notifyListeners();
+  }
+
   SongInfo getNextSong(){
     return _nextSong;
   }
@@ -116,7 +131,7 @@ class InfoProvider extends ChangeNotifier{
       var rnd = Random();
       int newIndex = rnd.nextInt(_songsList.length);
       print("tamaño: ${_songsList.length}");
-      print("newIndex: ${newIndex}");
+      print("newIndex: $newIndex");
 
       this._nextSong = _songsList[newIndex];
       this._currentIndex = newIndex;
@@ -149,6 +164,37 @@ class InfoProvider extends ChangeNotifier{
 
   void setRandom(bool newRandom){
     this._random = newRandom;
+    notifyListeners();
+  }
+
+  bool isPlaying(){
+    return _playing;
+  }
+
+  void setPlaying(bool newPlaying){
+    this._playing = newPlaying;
+    notifyListeners();
+    if(newPlaying == true){
+      setControlBarIcon(Icons.pause_circle_filled_rounded);
+    }
+    else{
+      setControlBarIcon(Icons.play_circle_fill_rounded);
+    }
+  }
+
+  IconData getControlBarIcon(){
+    return _controlBarIcon;
+  }
+
+  void setControlBarIcon(IconData icon){
+    this._controlBarIcon = icon;
+    notifyListeners();
+  }
+
+  void setSong(SongInfo songInfo) async {
+    await getCurrentSong().setUrl(songInfo.uri);
+    setPlaying(true);
+    setCurrentSongInfo(songInfo);
     notifyListeners();
   }
 }

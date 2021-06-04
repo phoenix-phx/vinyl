@@ -11,15 +11,15 @@ class Player extends StatefulWidget {
   //const Player({Key key}) : super(key: key);
   SongInfo songInfo;
   Function changeTrack;
-  final GlobalKey<PlayerState> key;
+  final GlobalKey<PlayerStateClass> key;
 
   Player({this.songInfo, this.changeTrack, this.key}) : super(key: key);
 
   @override
-  PlayerState createState() => PlayerState();
+  PlayerStateClass createState() => PlayerStateClass();
 }
 
-class PlayerState extends State<Player> {
+class PlayerStateClass extends State<Player> {
   double minValue = 0.0, maxValue = 0.0, currentValue = 0.0;
   String currentTime = '', endTime = '';
   final AudioPlayer player = AudioPlayer();
@@ -42,6 +42,7 @@ class PlayerState extends State<Player> {
   void changeStatus(){
     setState(() {
       isPlaying = !isPlaying;
+      Provider.of<InfoProvider>(context, listen: false).setPlaying(isPlaying);
     });
 
     if(isPlaying){
@@ -93,6 +94,8 @@ class PlayerState extends State<Player> {
       });
     });
     Provider.of<InfoProvider>(context, listen: false).setCurrentSong(player);
+    Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songInfo);
+    //Provider.of<InfoProvider>(context, listen: false).setPlayerClass(this);
   }
 
   String getDuration(double value){
