@@ -57,6 +57,7 @@ class _TrackListState extends State<TrackList> {
   @override
   Widget build(BuildContext context) {
     songs = Provider.of<InfoProvider>(context).getFinalSongsList();
+    Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
     currentIndex = Provider.of<InfoProvider>(context).getCurrentIndex();
     print("Current Provider Index (Build):" + Provider.of<InfoProvider>(context).getCurrentIndex().toString());
 
@@ -208,6 +209,8 @@ class _AlbumSongsState extends State<AlbumSongs> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
     Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
     currentIndex = Provider.of<InfoProvider>(context).getCurrentIndex();
     print("Current Provider Index (Build):" + Provider.of<InfoProvider>(context).getCurrentIndex().toString());
@@ -303,6 +306,103 @@ class _AlbumSongsState extends State<AlbumSongs> {
           separatorBuilder: (context,index)=>Divider(),
           itemCount: songs.length
       ),
+
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.black,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: (Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo() == null)
+                          ? AssetImage('assets/music_gradient.jpg')
+                          : (Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo().albumArtwork == null)
+                          ? AssetImage('assets/music_gradient.jpg')
+                          : FileImage(File(Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo().albumArtwork,)),
+                    ),
+                    SizedBox(width: 10, height: 0,),
+                    Container(
+                      width: size.width/3,
+                      child: Text(
+                        (Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo() == null)
+                            ? 'None' : Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo().title,
+                        style: TextStyle(color: Colors.white),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: (){
+                  setState(() {
+                    print("I've been tapped!");
+                  });
+                },
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                      icon: Icon(
+                        Icons.skip_previous,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        if(!Provider.of<InfoProvider>(context, listen: false).isRandom()) {
+                          if (Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() != 0) {
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() - 1);
+                          }
+                          Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getSongsList()[Provider.of<InfoProvider>(context, listen: false).getCurrentIndex()]);
+                        }
+                        else{
+                          Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+                          // key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                          Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                        }
+                      }
+                  ),
+                  IconButton(
+                      icon: Icon(Provider.of<InfoProvider>(context).getControlBarIcon(),
+                        color: Colors.white,
+                        size: 35,
+                      ),
+                      onPressed: (){
+                        (Provider.of<InfoProvider>(context, listen: false).isPlaying())
+                            ? Provider.of<InfoProvider>(context, listen: false).getCurrentSong().pause()
+                            : Provider.of<InfoProvider>(context, listen: false).getCurrentSong().play();
+                        Provider.of<InfoProvider>(context, listen: false).setPlaying(!Provider.of<InfoProvider>(context, listen: false).isPlaying());
+                      }
+                  ),
+                  IconButton(
+                      icon: Icon(
+                        Icons.skip_next,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                      onPressed: (){
+                        if(!Provider.of<InfoProvider>(context, listen: false).isRandom()) {
+                          if (Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() != Provider.of<InfoProvider>(context, listen: false).getSongsList().length - 1) {
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() + 1);
+                          }
+                          Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getSongsList()[Provider.of<InfoProvider>(context, listen: false).getCurrentIndex()]);
+                        }
+                        else{
+                          Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+                          // key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                          Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                        }
+                      }
+                  ),
+                ],
+              ),
+            ],
+
+          ),
+        )
     );
   }
 }
@@ -392,6 +492,8 @@ class _ArtistSongsState extends State<ArtistSongs> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
     Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
     currentIndex = Provider.of<InfoProvider>(context).getCurrentIndex();
     print("Current Provider Index (Build):" + Provider.of<InfoProvider>(context).getCurrentIndex().toString());
@@ -487,6 +589,103 @@ class _ArtistSongsState extends State<ArtistSongs> {
           separatorBuilder: (context,index)=>Divider(),
           itemCount: songs.length
       ),
+
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.black,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              GestureDetector(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CircleAvatar(
+                      backgroundImage: (Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo() == null)
+                          ? AssetImage('assets/music_gradient.jpg')
+                          : (Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo().albumArtwork == null)
+                          ? AssetImage('assets/music_gradient.jpg')
+                          : FileImage(File(Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo().albumArtwork,)),
+                    ),
+                    SizedBox(width: 10, height: 0,),
+                    Container(
+                      width: size.width/3,
+                      child: Text(
+                        (Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo() == null)
+                            ? 'None' : Provider.of<InfoProvider>(context, listen: false).getCurrentSongInfo().title,
+                        style: TextStyle(color: Colors.white),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                onTap: (){
+                  setState(() {
+                    print("I've been tapped!");
+                  });
+                },
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                      icon: Icon(
+                        Icons.skip_previous,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        if(!Provider.of<InfoProvider>(context, listen: false).isRandom()) {
+                          if (Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() != 0) {
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() - 1);
+                          }
+                          Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getSongsList()[Provider.of<InfoProvider>(context, listen: false).getCurrentIndex()]);
+                        }
+                        else{
+                          Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+                          // key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                          Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                        }
+                      }
+                  ),
+                  IconButton(
+                      icon: Icon(Provider.of<InfoProvider>(context).getControlBarIcon(),
+                        color: Colors.white,
+                        size: 35,
+                      ),
+                      onPressed: (){
+                        (Provider.of<InfoProvider>(context, listen: false).isPlaying())
+                            ? Provider.of<InfoProvider>(context, listen: false).getCurrentSong().pause()
+                            : Provider.of<InfoProvider>(context, listen: false).getCurrentSong().play();
+                        Provider.of<InfoProvider>(context, listen: false).setPlaying(!Provider.of<InfoProvider>(context, listen: false).isPlaying());
+                      }
+                  ),
+                  IconButton(
+                      icon: Icon(
+                        Icons.skip_next,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                      onPressed: (){
+                        if(!Provider.of<InfoProvider>(context, listen: false).isRandom()) {
+                          if (Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() != Provider.of<InfoProvider>(context, listen: false).getSongsList().length - 1) {
+                            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(Provider.of<InfoProvider>(context, listen: false).getCurrentIndex() + 1);
+                          }
+                          Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getSongsList()[Provider.of<InfoProvider>(context, listen: false).getCurrentIndex()]);
+                        }
+                        else{
+                          Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+                          // key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                          Provider.of<InfoProvider>(context, listen: false).setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                        }
+                      }
+                  ),
+                ],
+              ),
+            ],
+
+          ),
+        )
     );
   }
 }
