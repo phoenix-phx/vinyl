@@ -105,8 +105,8 @@ class PlayerStateClass extends State<Player> {
 
   @override
   Widget build(BuildContext context) {
-    //var screen = MediaQuery.of(context).size;
-    var bl = Provider.of<InfoProvider>(context).isLoop();
+    var screen = MediaQuery.of(context).size;
+    var bl = Provider.of<InfoProvider>(context, listen: false).isLoop();
     var bs = Provider.of<InfoProvider>(context, listen: false).isRandom();
     Looping(bl);
     print('looping $bl');
@@ -150,21 +150,19 @@ class PlayerStateClass extends State<Player> {
           Center(
             child: Container(
               //margin: EdgeInsets.fromLTRB(25, 10, 0, 7),
-              child: Center(
-                child: Text(
-                    widget.songInfo.title,
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600
-                    )
-                ),
+              child: Text(
+                  widget.songInfo.title,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600
+                  )
               ),
             ),
           ),
           Center(
             child: Container(
-              //margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 15),
               child: Text(
                   widget.songInfo.artist,
                   style: TextStyle(
@@ -223,34 +221,25 @@ class PlayerStateClass extends State<Player> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 GestureDetector(
-                  child: Icon(
-                    (bl) ? Icons.repeat_one: Icons.repeat,
-                    color: Colors.grey,
-                    size: 35,
-                  ),
                   behavior: HitTestBehavior.translucent,
+                  child: (bl) ? Controls(Icons.repeat_one): Controls(Icons.repeat),
                   onTap: (){
-                    setState(() {
+                    setState(() async {
                       bl = !bl;
                       Provider.of<InfoProvider>(context, listen: false).setLoop(bl);
-                      if(Provider.of<InfoProvider>(context).isLoop()){
+                      if(Provider.of<InfoProvider>(context, listen: false).isLoop()){
                         print('REPETIR');
-                        player.setLoopMode(LoopMode.one);
+                        await player.setLoopMode(LoopMode.one);
                       }
                       else{
-                        player.setLoopMode(LoopMode.off);
+                        await player.setLoopMode(LoopMode.off);
                       }
                     });
-
                   },
                 ),
                 GestureDetector(
-                  child: Icon(
-                    Icons.skip_previous,
-                    color: Colors.black,
-                    size: 45,
-                  ),
                   behavior: HitTestBehavior.translucent,
+                  child: Controls(Icons.skip_previous),
                   onTap: (){
                     setState(() {
                       widget.changeTrack(context, false, isShuffle);
@@ -258,11 +247,7 @@ class PlayerStateClass extends State<Player> {
                   },
                 ),
                 GestureDetector(
-                  child: Icon(
-                    (isPlaying) ? Icons.pause_circle_filled_rounded: Icons.play_circle_fill_rounded,
-                    color: Colors.black,
-                    size: 65,
-                  ),
+                  child: (isPlaying) ? PlayControl(Icons.pause_circle_filled_rounded): PlayControl(Icons.play_circle_fill_rounded),
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
@@ -271,11 +256,7 @@ class PlayerStateClass extends State<Player> {
                   },
                 ),
                 GestureDetector(
-                  child: Icon(
-                    Icons.skip_next,
-                    color: Colors.black,
-                    size: 45,
-                  ),
+                  child: Controls(Icons.skip_next),
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
@@ -284,11 +265,7 @@ class PlayerStateClass extends State<Player> {
                   },
                 ),
                 GestureDetector(
-                  child: Icon(
-                    (bs) ? Icons.shuffle : Icons.arrow_right_alt,
-                    color: Colors.grey,
-                    size: 35,
-                  ),
+                  child: (bs) ? Controls(Icons.shuffle) : Controls(Icons.arrow_right_alt),
                   behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
@@ -356,6 +333,103 @@ Widget NavBarItem(context, IconData icon){
             Navigator.of(context).pop();
           }
         }
+    ),
+  );
+}
+
+
+Widget PlayControl(IconData icons){
+  return Container(
+    width: 100,
+    height: 100,
+    decoration: BoxDecoration(
+      color: Colors.black,
+      shape: BoxShape.circle,
+      boxShadow: [
+        BoxShadow(
+            color: Colors.white,
+            offset: Offset(5,10),
+            spreadRadius: 3,
+            blurRadius: 10
+        ),
+        BoxShadow(
+            color: Colors.black,
+            offset: Offset(-3,-4),
+            spreadRadius: -2,
+            blurRadius: 20
+        ),
+      ],
+    ),
+    child: Stack(
+      children: [
+        Center(
+          child: Container(
+            margin: EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        Center(
+          child: Container(
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: Center(child: Icon(icons, size: 70,)),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget Controls(IconData icons){
+  return Container(
+    width: 50,
+    height: 50,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      shape: BoxShape.circle,
+      boxShadow: [
+        BoxShadow(
+            color: Colors.black45,
+            offset: Offset(5,10),
+            spreadRadius: 3,
+            blurRadius: 10
+        ),
+        BoxShadow(
+            color: Colors.white,
+            offset: Offset(-3,-4),
+            spreadRadius: -2,
+            blurRadius: 20
+        ),
+      ],
+    ),
+    child: Stack(
+      children: [
+        Center(
+          child: Container(
+            margin: EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        Center(
+          child: Container(
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: Center(child: Icon(icons,size: 30,)),
+          ),
+        ),
+      ],
     ),
   );
 }
