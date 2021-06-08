@@ -24,8 +24,8 @@ class PlayerStateClass extends State<Player> {
   String currentTime = '', endTime = '';
   final AudioPlayer player = AudioPlayer();
   bool isPlaying = false;
-  //bool isLooping = false;
   bool isShuffle = false;
+  bool isLooping = false;
 
   @override
   void initState() {
@@ -50,14 +50,6 @@ class PlayerStateClass extends State<Player> {
     }
     else{
       player.pause();
-    }
-  }
-
-  void Looping(bool bl) async {
-    if(bl){
-      await player.setLoopMode(LoopMode.one);
-    }else{
-      await player.setLoopMode(LoopMode.off);
     }
   }
 
@@ -88,8 +80,14 @@ class PlayerStateClass extends State<Player> {
       setState(() {
         currentTime = getDuration(currentValue);
         if(currentValue>=maxValue){
-          print('FIN');
-          widget.changeTrack(context, true, isShuffle);
+          if(isLooping == false){
+            player.setLoopMode(LoopMode.off);
+            print('FIN');
+            widget.changeTrack(context, true, isShuffle);
+          }else{
+            player.setLoopMode(LoopMode.one);
+          }
+
         }
       });
     });
@@ -105,10 +103,9 @@ class PlayerStateClass extends State<Player> {
 
   @override
   Widget build(BuildContext context) {
-    //var screen = MediaQuery.of(context).size;
-    var bl = Provider.of<InfoProvider>(context).isLoop();
+    var bl = Provider.of<InfoProvider>(context,listen: false).isLoop();
     var bs = Provider.of<InfoProvider>(context, listen: false).isRandom();
-    Looping(bl);
+    //Looping(bl);
     print('looping $bl');
     return Scaffold(
       //backgroundColor: Colors.white,
@@ -232,14 +229,8 @@ class PlayerStateClass extends State<Player> {
                   onTap: (){
                     setState(() {
                       bl = !bl;
-                      Provider.of<InfoProvider>(context, listen: false).setLoop(bl);
-                      if(Provider.of<InfoProvider>(context).isLoop()){
-                        print('REPETIR');
-                        player.setLoopMode(LoopMode.one);
-                      }
-                      else{
-                        player.setLoopMode(LoopMode.off);
-                      }
+                      Provider.of<InfoProvider>(context,listen: false).setLoop(bl);
+                      isLooping = bl;
                     });
 
                   },
