@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:vinyl/servers/InfoProvider.dart';
 import 'package:vinyl/views/Credits.dart';
 import 'package:vinyl/views/ListWidgets.dart';
+import 'package:vinyl/servers/database.dart';
 
 class MainView extends StatefulWidget {
   const MainView({Key key}) : super(key: key);
@@ -28,11 +29,15 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
   Map<String, List<SongInfo>> artists = Map();
   List<String> artistNames = [];
 
+  List<SongInfo> favs = [];
+  FavoritesDatabase db = FavoritesDatabase();
+
   @override
   void initState() {
     super.initState();
-    _controller = TabController(length: 3, vsync: this, initialIndex: 0);
+    _controller = TabController(length: 4, vsync: this, initialIndex: 1);
     getTracks();
+    buildFav(context);
   }
 
   void getTracks() async{
@@ -43,6 +48,26 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
     Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
     Provider.of<InfoProvider>(context, listen: false).setFinalSongsList(songs);
     getAllLists(context);
+  }
+
+  buildFav(BuildContext context) async{
+    print("configurando los fav songs");
+    await db.initDB();
+    favs.clear();
+    List<Map<String, dynamic>> favorites = await db.database.query('favs');
+    for(var fav in favorites){
+      print("Unario fav: ${fav}");
+      for(SongInfo song in Provider.of<InfoProvider>(context, listen: false).getFinalSongsList()){
+        if(song.title == fav["name"]){
+          print("Pillao");
+          favs.add(song);
+          break;
+        }
+      }
+    }
+    print("fav songs: $favs");
+    print("");
+    Provider.of<InfoProvider>(context, listen: false).setFavSongs(favs);
   }
 
   void getAllLists(BuildContext context){
@@ -135,6 +160,7 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
           bottom: TabBar(
               controller: _controller,
               tabs: [
+                Tab(icon: Icon(Icons.whatshot_outlined,),),
                 Tab(text: "Songs",),
                 Tab(text: "Albums",),
                 Tab(text: "Artists",),
@@ -146,6 +172,7 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
             controller: _controller,
             children: [
               // todas las paginas a mostrar
+              FavList(),
               TrackList(),
               AlbumList(),
               ArtistList(),

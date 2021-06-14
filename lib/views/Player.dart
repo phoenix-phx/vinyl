@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:provider/provider.dart';
+import 'package:vinyl/servers/Favorites.dart';
 import 'package:vinyl/servers/InfoProvider.dart';
+import 'package:vinyl/servers/database.dart';
 
 // ignore: must_be_immutable
 class Player extends StatefulWidget {
@@ -27,10 +29,17 @@ class PlayerStateClass extends State<Player> {
   bool isShuffle = false;
   bool isLooping = false;
 
+  FavoritesDatabase db = FavoritesDatabase();
+  int counter = 0;
+  bool isFav = false;
+
+  List<SongInfo> favs = [];
+
   @override
   void initState() {
     super.initState();
     setSong(widget.songInfo);
+    //checkFav(context, widget.songInfo.title);
   }
 
   void dispose(){
@@ -51,6 +60,26 @@ class PlayerStateClass extends State<Player> {
     else{
       player.pause();
     }
+  }
+
+  rebuildFav(BuildContext context) async{
+    print("configurando los fav songs");
+    await db.initDB();
+    favs.clear();
+    List<Map<String, dynamic>> favorites = await db.database.query('favs');
+    for(var fav in favorites){
+      print("Unario fav: ${fav}");
+      for(SongInfo song in Provider.of<InfoProvider>(context, listen: false).getFinalSongsList()){
+        if(song.title == fav["name"]){
+          print("Pillao");
+          favs.add(song);
+          break;
+        }
+      }
+    }
+    print("fav songs: $favs");
+    print("");
+    Provider.of<InfoProvider>(context, listen: false).setFavSongs(favs);
   }
 
   void setSong(SongInfo songInfo) async {
@@ -101,12 +130,32 @@ class PlayerStateClass extends State<Player> {
     return [duration.inMinutes, duration.inSeconds].map((e) => e.remainder(60).toString().padLeft(2, '0')).join(':');
   }
 
+  checkFav(BuildContext context, String name)async{
+    db.initDB();
+    List<Map<String, dynamic>> favorites = await db.database.query('favs');
+    bool flag = false;
+    for(var fav in favorites){
+      print("Unario: ${fav}");
+      if(fav["name"] == name){
+        isFav = true;
+        flag = true;
+        break;
+      }
+    }
+    if(!flag){
+      isFav = false;
+    }
+    print("Song title: $name");
+  }
+
   @override
   Widget build(BuildContext context) {
     var bl = Provider.of<InfoProvider>(context,listen: false).isLoop();
     var bs = Provider.of<InfoProvider>(context, listen: false).isRandom();
     //Looping(bl);
     print('looping $bl');
+
+    checkFav(context, widget.songInfo.title);
     return Scaffold(
       //backgroundColor: Colors.white,
       body: Column(
@@ -216,82 +265,110 @@ class PlayerStateClass extends State<Player> {
           //ControlPlayer(),
           Container(
             margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Column(
               children: [
                 GestureDetector(
                   child: Icon(
-                    (bl) ? Icons.repeat_one: Icons.repeat,
-                    color: Colors.grey,
-                    size: 35,
+                      (isFav) ? Icons.whatshot : Icons.whatshot_outlined,
+                      color: (isFav) ? Colors.blue : Colors.black,
+                      size: 30,
                   ),
-                  behavior: HitTestBehavior.translucent,
                   onTap: (){
                     setState(() {
-                      bl = !bl;
-                      Provider.of<InfoProvider>(context,listen: false).setLoop(bl);
-                      isLooping = bl;
+                      if(isFav){
+                        db.delete(Favorite(widget.songInfo.title));
+                        print("Se borro");
+                      }
+                      else{
+                        db.insert(Favorite(widget.songInfo.title));
+                        print("Se agrego");
+                      }
+                      isFav = !isFav;
+                      rebuildFav(context);
                     });
+                  },
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    GestureDetector(
+                      child: Icon(
+                        (bl) ? Icons.repeat_one: Icons.repeat,
+                        color: Colors.grey,
+                        size: 35,
+                      ),
+                      behavior: HitTestBehavior.translucent,
+                      onTap: (){
+                        setState(() {
+                          bl = !bl;
+                          Provider.of<InfoProvider>(context,listen: false).setLoop(bl);
+                          isLooping = bl;
+                        });
 
-                  },
-                ),
-                GestureDetector(
-                  child: Icon(
-                    Icons.skip_previous,
-                    color: Colors.black,
-                    size: 45,
-                  ),
-                  behavior: HitTestBehavior.translucent,
-                  onTap: (){
-                    setState(() {
-                      widget.changeTrack(context, false, isShuffle);
-                    });
-                  },
-                ),
-                GestureDetector(
-                  child: Icon(
-                    (isPlaying) ? Icons.pause_circle_filled_rounded: Icons.play_circle_fill_rounded,
-                    color: Colors.black,
-                    size: 65,
-                  ),
-                  behavior: HitTestBehavior.translucent,
-                  onTap: (){
-                    setState(() {
-                      changeStatus();
-                    });
-                  },
-                ),
-                GestureDetector(
-                  child: Icon(
-                    Icons.skip_next,
-                    color: Colors.black,
-                    size: 45,
-                  ),
-                  behavior: HitTestBehavior.translucent,
-                  onTap: (){
-                    setState(() {
-                      widget.changeTrack(context, true, isShuffle);
-                    });
-                  },
-                ),
-                GestureDetector(
-                  child: Icon(
-                    (bs) ? Icons.shuffle : Icons.arrow_right_alt,
-                    color: Colors.grey,
-                    size: 35,
-                  ),
-                  behavior: HitTestBehavior.translucent,
-                  onTap: (){
-                    setState(() {
-                      bs = !bs;
-                      Provider.of<InfoProvider>(context, listen: false).setRandom(bs);
-                      print('ALEATORIO');
-                      isShuffle = bs;
+                      },
+                    ),
+                    GestureDetector(
+                      child: Icon(
+                        Icons.skip_previous,
+                        color: Colors.black,
+                        size: 45,
+                      ),
+                      behavior: HitTestBehavior.translucent,
+                      onTap: (){
+                        setState(() {
+                          widget.changeTrack(context, false, isShuffle);
+                        });
+                      },
+                    ),
+                    GestureDetector(
+                      child: Icon(
+                        (isPlaying) ? Icons.pause_circle_filled_rounded: Icons.play_circle_fill_rounded,
+                        color: Colors.black,
+                        size: 65,
+                      ),
+                      behavior: HitTestBehavior.translucent,
+                      onTap: (){
+                        setState(() {
+                          changeStatus();
+                        });
+                      },
+                    ),
+                    GestureDetector(
+                      child: Icon(
+                        Icons.skip_next,
+                        color: Colors.black,
+                        size: 45,
+                      ),
+                      behavior: HitTestBehavior.translucent,
+                      onTap: (){
+                        setState(() {
+                          widget.changeTrack(context, true, isShuffle);
+                        });
+                      },
+                    ),
+                    GestureDetector(
+                      child: Icon(
+                        (bs) ? Icons.shuffle : Icons.arrow_right_alt,
+                        color: Colors.grey,
+                        size: 35,
+                      ),
+                      behavior: HitTestBehavior.translucent,
+                      onTap: (){
+                        setState(() {
+                          bs = !bs;
+                          Provider.of<InfoProvider>(context, listen: false).setRandom(bs);
+                          print('ALEATORIO');
+                          isShuffle = bs;
 
 
-                      //print('random $isShuffle');
-                    });
-                  },
+                          //print('random $isShuffle');
+                        });
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

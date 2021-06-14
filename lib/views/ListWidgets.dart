@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:provider/provider.dart';
+import 'package:vinyl/servers/Favorites.dart';
 import 'package:vinyl/servers/InfoProvider.dart';
+import 'package:vinyl/servers/database.dart';
 import 'package:vinyl/views/Player.dart';
 
 class TrackList extends StatefulWidget {
@@ -123,6 +125,159 @@ class _TrackListState extends State<TrackList> {
     );
   }
 }
+
+
+class FavList extends StatefulWidget {
+  const FavList({Key key}) : super(key: key);
+
+  @override
+  _FavListState createState() => _FavListState();
+}
+
+class _FavListState extends State<FavList> {
+  final FlutterAudioQuery audioQuery = FlutterAudioQuery();
+  final GlobalKey<PlayerStateClass> key = GlobalKey<PlayerStateClass>();
+
+  FavoritesDatabase db = FavoritesDatabase();
+
+  //List<SongInfo> globalSongs;
+  List<SongInfo> songs;
+  int currentIndex;
+  int counter = 0;
+  bool isEmpty = false;
+
+  checkEmpty(){
+    if(songs.length == 0){
+      isEmpty = true;
+    }
+    else{
+      isEmpty = false;
+    }
+  }
+
+  /*
+  buildFav(BuildContext context) async{
+    await db.initDB();
+    songs.clear();
+    List<Map<String, dynamic>> favorites = await db.database.query('favs');
+    for(var fav in favorites){
+      print("Unario fav: ${fav}");
+      for(SongInfo song in globalSongs){
+        if(song.title == fav["name"]){
+          print("Pillao");
+          songs.add(song);
+          break;
+        }
+      }
+    }
+    print("Songs: $songs");
+    print("");
+  }
+
+   */
+
+  @override
+  Widget build(BuildContext context) {
+    songs = Provider.of<InfoProvider>(context).getFavSongs();
+    currentIndex = Provider.of<InfoProvider>(context).getCurrentIndex();
+    print("Current Provider Index (Build):" + Provider.of<InfoProvider>(context).getCurrentIndex().toString());
+
+    //buildFav(context);
+    //Provider.of<InfoProvider>(context, listen: false).setSongsList(songs);
+    // songs = Provider.of<InfoProvider>(context, listen: true).getSongsList();
+
+    checkEmpty();
+    return (isEmpty)? Center(child: Text("No favorites added"),)
+        :ListView.separated(
+        itemBuilder: (context, index) => ListTile(
+          leading: CircleAvatar(
+            backgroundImage: songs[index].albumArtwork == null ? AssetImage('assets/music_gradient.jpg') : FileImage(File(songs[index].albumArtwork)),
+          ),
+          title: Text(songs[index].title),
+          subtitle: Text(songs[index].artist),
+          onTap: (){
+            currentIndex=index;
+            // kill last song
+            Provider.of<InfoProvider>(context, listen: false).getCurrentSong().stop();
+            Provider.of<InfoProvider>(context, listen: false).getCurrentSong().dispose();
+
+            Provider.of<InfoProvider>(context, listen: false).setCurrentIndex(currentIndex);
+
+            Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => Player(
+                      songInfo: songs[currentIndex],
+                      changeTrack: (BuildContext context, bool isNext, bool random){
+                        if(!random) {
+                          if (isNext) {
+                            if (currentIndex != songs.length - 1) {
+                              currentIndex++;
+                              Provider.of<InfoProvider>(
+                                  context, listen: false).setCurrentIndex(
+                                  currentIndex);
+                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                            }
+                          }
+                          else {
+                            if (currentIndex != 0) {
+                              currentIndex--;
+                              Provider.of<InfoProvider>(
+                                  context, listen: false).setCurrentIndex(
+                                  currentIndex);
+                              //print("Current Provider Index:" + Provider.of<InfoProvider>(context, listen: false).getCurrentIndex().toString());
+                            }
+                          }
+                          key.currentState.setSong(songs[currentIndex]);
+                          Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
+                          Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songs[currentIndex]);
+                        }
+                        else{
+                          print("entra a la siguiente cancion");
+                          Provider.of<InfoProvider>(context, listen: false).setNextSong(true);
+                          key.currentState.setSong(Provider.of<InfoProvider>(context, listen: false).getNextSong());
+                          Provider.of<InfoProvider>(context, listen: false).setCurrentSong(key.currentState.player);
+                          Provider.of<InfoProvider>(context, listen: false).setCurrentSongInfo(songs[currentIndex]);
+                        }
+                      },
+                      key: key,
+                    )
+                )
+            );
+          },
+        ),
+        separatorBuilder: (context,index)=>Divider(),
+        itemCount: songs.length
+    );
+  }
+
+  _showList(BuildContext context){
+    return FutureBuilder(
+        future: db.getAllFavorites(),
+        builder: (BuildContext context, AsyncSnapshot<List<Favorite>> snapshot) {
+          print(snapshot.data);
+          print(snapshot.hasData);
+          if (counter >= 1) {
+            if (snapshot.data != null && snapshot.data.length > 0) {
+              return ListView(
+                children: [
+                  for (Favorite favorite in snapshot.data) ListTile(
+                    title: Text(favorite.name),)
+                ],
+              );
+            }
+            else {
+              return Center(child: Text('No favorites saved'),);
+            }
+          }
+          else {
+            counter++;
+            return Center(child: Text('Loading'),);
+          }
+        }
+    );
+  }
+}
+
 
 
 class AlbumList extends StatefulWidget {

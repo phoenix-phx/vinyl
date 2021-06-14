@@ -8,6 +8,7 @@ import 'package:vinyl/views/Player.dart';
 class InfoProvider extends ChangeNotifier{
   List<SongInfo> _finalSongsList = [];
   List<SongInfo> _songsList = [];
+  List<SongInfo> _favSongs = [];
   int _currentIndex = 0;
   int _loaded = 0;
 
@@ -43,6 +44,15 @@ class InfoProvider extends ChangeNotifier{
 
   void setSongsList(List<SongInfo> songs){
     this._songsList = songs;
+    notifyListeners();
+  }
+
+  List<SongInfo> getFavSongs(){
+    return _favSongs;
+  }
+
+  void setFavSongs(List<SongInfo> songs){
+    this._favSongs = songs;
     notifyListeners();
   }
 
