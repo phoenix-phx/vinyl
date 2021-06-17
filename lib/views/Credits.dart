@@ -25,7 +25,7 @@ class Credits extends StatelessWidget {
             ],
           )),
           SizedBox(width: 0, height: 20,),
-          Center(child: Text('Version: 1.1.0 (Beta)', style: TextStyle(color: Colors.black, fontSize: 15,),)),
+          Center(child: Text('Version: 1.1.1 (Beta)', style: TextStyle(color: Colors.black, fontSize: 15,),)),
           SizedBox(width: 0, height: 5,),
           Center(child: Text('Developed by: Alexander Sosa, Valeria Aguirre', style: TextStyle(color: Colors.black, fontSize: 15),)),
         ],
