@@ -63,22 +63,22 @@ class PlayerStateClass extends State<Player> {
   }
 
   rebuildFav(BuildContext context) async{
-    print("configurando los fav songs");
+    //print("configurando los fav songs");
     await db.initDB();
     favs.clear();
     List<Map<String, dynamic>> favorites = await db.database.query('favs');
     for(var fav in favorites){
-      print("Unario fav: ${fav}");
+      //print("Unario fav: ${fav}");
       for(SongInfo song in Provider.of<InfoProvider>(context, listen: false).getFinalSongsList()){
         if(song.title == fav["name"]){
-          print("Pillao");
+          //print("Pillao");
           favs.add(song);
           break;
         }
       }
     }
-    print("fav songs: $favs");
-    print("");
+    //print("fav songs: $favs");
+    //print("");
     Provider.of<InfoProvider>(context, listen: false).setFavSongs(favs);
   }
 
@@ -135,7 +135,7 @@ class PlayerStateClass extends State<Player> {
     List<Map<String, dynamic>> favorites = await db.database.query('favs');
     bool flag = false;
     for(var fav in favorites){
-      print("Unario: ${fav}");
+      //print("Unario: ${fav}");
       if(fav["name"] == name){
         isFav = true;
         flag = true;
@@ -145,7 +145,7 @@ class PlayerStateClass extends State<Player> {
     if(!flag){
       isFav = false;
     }
-    print("Song title: $name");
+    //print("Song title: $name");
   }
 
   @override
@@ -153,7 +153,7 @@ class PlayerStateClass extends State<Player> {
     var bl = Provider.of<InfoProvider>(context,listen: false).isLoop();
     var bs = Provider.of<InfoProvider>(context, listen: false).isRandom();
     //Looping(bl);
-    print('looping $bl');
+    //print('looping $bl');
 
     checkFav(context, widget.songInfo.title);
     return Scaffold(
@@ -215,11 +215,35 @@ class PlayerStateClass extends State<Player> {
                   widget.songInfo.artist,
                   style: TextStyle(
                       color: Colors.black54,
-                      fontSize: 20,
+                      fontSize: 17,
                       fontWeight: FontWeight.w500
                   )
               ),
             ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          GestureDetector(
+            child: Icon(
+              (isFav) ? Icons.whatshot : Icons.whatshot_outlined,
+              color: (isFav) ? Colors.blue : Colors.black,
+              size: 30,
+            ),
+            onTap: (){
+              setState(() {
+                if(isFav){
+                  db.delete(Favorite(widget.songInfo.title));
+                  print("Se borro");
+                }
+                else{
+                  db.insert(Favorite(widget.songInfo.title));
+                  print("Se agrego");
+                }
+                isFav = !isFav;
+                rebuildFav(context);
+              });
+            },
           ),
           Container(
             margin: EdgeInsets.fromLTRB(15, 0, 0, 15),
@@ -267,30 +291,6 @@ class PlayerStateClass extends State<Player> {
             margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Column(
               children: [
-                GestureDetector(
-                  child: Icon(
-                      (isFav) ? Icons.whatshot : Icons.whatshot_outlined,
-                      color: (isFav) ? Colors.blue : Colors.black,
-                      size: 30,
-                  ),
-                  onTap: (){
-                    setState(() {
-                      if(isFav){
-                        db.delete(Favorite(widget.songInfo.title));
-                        print("Se borro");
-                      }
-                      else{
-                        db.insert(Favorite(widget.songInfo.title));
-                        print("Se agrego");
-                      }
-                      isFav = !isFav;
-                      rebuildFav(context);
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: 10,
-                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
